@@ -24,3 +24,39 @@
 
 ![VFS architecture](/cvfs_01.png)
 
+## Components of VFS:
+
+1. SUPERBLOCK
+2. INODE
+3. DENTRY
+4. FILE OBJECT 
+
+------------
+
+## 1. SUPERBLOCK : `struct super_block`
+
+A superblock represents state and global attributes of a mounted filesystem instance.
+
+It holds filesystem wide data like block sizes, maximum file size, and flags.
+
+When you mount ext4 at /home, VFS creates a superblock object in memory for that mount.
+
+`Analogy` : If we consider the file system as a library, the superblock is the library cataloge system - it knows how many books exist, where to find them, the library rules, etc.
+
+**Are there 2 superblocks? The VFS one and the FS one?**
+
+Yes, there are these 2 superblocks one belongs to the actual filesystem (eg.ext4) and another is the VFS struct super_block.
+
+How these two superblocks relate is; The VFS superblock resides on RAM throughout its lifetime as it is a part of the VFS, and the FS superblock resides on the disk.
+
+When you run mount() system call, the actual FS reads its on-disk superblock, then populates the VFS struch super_block in RAM. From this point onwards the VFS uses only the RAM version.
+
+
+`Note` : Whenever the kernel needs to read or write a file, it resolves the path to locate the target inode, and every inode contains a pointer back to it's corresponding superblock. This ensures the kernel knows exactly which file system driver to route the I/O requests through.
+
+
+Operations of superblock (s_op):alloc_inode, destroy_inode, put_super, statfs, remount_fs, etc
+
+
+
+
